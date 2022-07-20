@@ -1,0 +1,23 @@
+@import './vairables';
+@import './breakpoint';
+@import './mixin';
+@import './components/header';
+@import './components/button';
+@import './components/select';
+@import './components/pageHeader';
+@import './components/card';
+@import './pages/home';
+
+.container {
+  padding: 0 120px;
+  @include mobile {
+    padding: 0 100px;
+  }
+}
+
+.width-100 {
+  width: 100%;
+}
+.page-padding{
+  padding: 44px 0;
+}

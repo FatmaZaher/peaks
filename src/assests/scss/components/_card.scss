@@ -1,0 +1,50 @@
+.card-new {
+    width: 100%;
+    height: 350px;
+    color: $white-color;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    @include flex(end, center);
+
+    .card-new-info {
+        height: 33%;
+        width: 100%;
+        background: rgba($color: $main-color, $alpha: 0.9);
+        padding: $padding-card;
+   
+
+        .title {
+            margin-bottom: 8px;
+            font-size: 20px;
+            line-height: 29px;
+            letter-spacing: 0.07px;
+        }
+
+        p {
+            font-weight: 300;
+            font-size: 14px;
+            line-height: 20px;
+            letter-spacing: 0.1px;
+        }
+    }
+
+}
+
+.card-new-text {
+    height: 100%;
+    width: 255px;
+    background: $main-color;
+    color: $white-color;
+    padding: $padding-card;
+
+    .title {
+        font-weight: 700;
+        font-size: 18px;
+        line-height: 27px;
+        /* or 150% */
+        
+        letter-spacing: 0.063px;
+
+    }
+}

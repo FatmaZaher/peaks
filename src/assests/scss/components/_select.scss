@@ -1,0 +1,15 @@
+.form-control {
+
+    .select-input {
+        width: 255px;
+        height: 45px;
+        line-height: 45px;
+        background: none;
+        padding: 0 10px;
+        font-size: 16px;
+        border: none;
+        outline: none;
+        color: $black-color;
+        border-bottom: 1px solid $black-color;
+    }
+}

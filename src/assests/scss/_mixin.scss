@@ -1,0 +1,9 @@
+@mixin flex($aligin-item, $justify-content) {
+  display: flex;
+  align-items: $aligin-item;
+  justify-content: $justify-content;
+  flex-wrap: wrap;
+}
+@mixin weight($weight) {
+  font-weight: $weight;
+}

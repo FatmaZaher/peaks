@@ -1,0 +1,27 @@
+@import "./assests/scss/index.scss";
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&display=swap');
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+}
+
+html {
+    overflow-x: hidden;
+}
+
+body {
+    font-family: $font-family;
+    font-weight: 400;
+    line-height: 1.5;
+    width: 100%;
+    font-size: clamp(.5rem, 3vw, 1rem);
+    margin: 0 !important;
+
+    p {
+        margin: 0;
+        font-family: 'Roboto', sans-serif;
+    }
+}

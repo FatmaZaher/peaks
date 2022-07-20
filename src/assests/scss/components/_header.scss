@@ -1,0 +1,63 @@
+.header {
+    background-color: $main-color;
+    padding: 35px 0;
+    position: relative;
+}
+
+.search-box {
+    display: table;
+    position: absolute;
+    bottom: 0;
+    right: 165px;
+
+    input {
+        background: none;
+        border: none;
+        outline: none;
+        border-bottom: 3px solid $white-color;
+        width: 90px;
+        min-width: 0;
+        height: 44px;
+        padding: 0 50px;
+        z-index: 1;
+        position: relative;
+        line-height: 18px;
+        font-size: 14px;
+        transition: all .6s ease;
+        cursor: pointer;
+        color: $white-color;
+
+        &::placeholder {
+            color: rgba(255, 255, 255, 0.3)
+        }
+
+        &+div {
+            position: absolute;
+            height: 44px;
+            width: 100%;
+            top: 0;
+            transition: all .6s ease;
+            @include flex(center, center);
+
+            svg {
+                display: block;
+                height: 44px;
+                width: 17px;
+                transition: all .6s ease;
+            }
+        }
+
+        &:not(:placeholder-shown),
+        &:focus {
+            width: 300px;
+            padding: 0 40px;
+            cursor: text;
+            background: rgba(255, 255, 255, 0.2);
+
+            &+div {
+                @include flex(center, end);
+                padding-right: 40px;
+            }
+        }
+    }
+}

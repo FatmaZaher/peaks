@@ -1,0 +1,18 @@
+.btn {
+    padding: 0 15px;
+    height: 30px;
+    background-color: $main-color;
+    text-transform: uppercase;
+    color: $white-color;
+    border: none;
+    outline: none;
+    font-weight: 500;
+    border-radius: $border-radius;
+    font-size: 13px;
+    cursor: pointer;
+    @include flex(center, center);
+
+    svg {
+        margin-right: 10px;
+    }
+}

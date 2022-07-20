@@ -1,0 +1,14 @@
+.page-header {
+    margin-bottom: $margin-bottom;
+    @include flex(center, space-between);
+
+    >div {
+        @include flex(end, space-between);
+        gap: 15px;
+
+    }
+    .title{
+        font-size: 48px;
+    }
+
+}
