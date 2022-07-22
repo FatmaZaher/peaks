@@ -2,13 +2,13 @@ import React from "react";
 import { useState } from "react";
 import Bookmark from "./icons/Bookmark";
 
-const Button = () => {
-  const [bookmark, setBookmark] = useState("add bookmark");
+const Button = (props) => {
+  const {onClick, bookmarkText} = props;
 
   return (
-    <button type-="button" className="btn">
+    <button type-="button" className="btn" onClick={onClick}>
       <Bookmark />
-      <span>{bookmark}</span>
+      <span>{bookmarkText}</span>
     </button>
   );
 };

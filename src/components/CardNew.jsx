@@ -1,19 +1,18 @@
 import React from "react";
-import pic from "../assests/images/pic.png";
 
 const CardNew = (props) => {
-    const {cardInfo} = props;
+  const { item, index, hideBody } = props;
+  const card = {
+    backgroundImage: `url(${item.fields.thumbnail})`,
+  };
   return (
-    <div className="card-new" style={{ backgroundImage: `url(${pic})` }}>
+    <div
+      className={`${item.fields.thumbnail ? "card-new" : "card-new-text"}`}
+      style={item.fields.thumbnail ? card : null}
+    >
       <div className="card-new-info">
-        <h3 className="title">
-          {cardInfo.title}
-        </h3>
-        {cardInfo.body && (
-          <p>
-            {cardInfo.body}
-          </p>
-        )}
+        <h3 className="title">{item.webTitle}</h3>
+        {item.fields.body && <p className={`${hideBody ? "hide-body" : null}`}>{item.fields.body}</p>}
       </div>
     </div>
   );

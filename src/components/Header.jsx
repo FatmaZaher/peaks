@@ -1,8 +1,6 @@
 import React from "react";
 import logo from "../assests/images/logo.png";
 import Search from "./icons/Search";
-import Button from "./Button";
-import PageHeader from "./PageHeader";
 
 const Header = () => {
   return (

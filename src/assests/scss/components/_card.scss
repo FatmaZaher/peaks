@@ -6,13 +6,15 @@
     background-size: cover;
     background-repeat: no-repeat;
     @include flex(end, center);
+    overflow: hidden;
+    cursor: pointer;
 
     .card-new-info {
         height: 33%;
         width: 100%;
         background: rgba($color: $main-color, $alpha: 0.9);
         padding: $padding-card;
-   
+
 
         .title {
             margin-bottom: 8px;
@@ -28,7 +30,6 @@
             letter-spacing: 0.1px;
         }
     }
-
 }
 
 .card-new-text {
@@ -37,14 +38,23 @@
     background: $main-color;
     color: $white-color;
     padding: $padding-card;
+    height: 255px;
+    overflow: hidden;
+    margin-bottom: 50px;
+    cursor: pointer;
 
     .title {
         font-weight: 700;
         font-size: 18px;
         line-height: 27px;
-        /* or 150% */
-        
         letter-spacing: 0.063px;
-
     }
+
+    p {
+        display: none;
+    }
+}
+
+p.hide-body {
+    display: none;
 }
