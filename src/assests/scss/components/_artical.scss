@@ -1,0 +1,9 @@
+.artical-section {
+    .artical-body {
+        @include flex(start, space-between);
+        .block{
+            margin-bottom: 20px;
+        }
+    }
+
+}

@@ -1,7 +1,7 @@
 import React from "react";
 
 const CardNew = (props) => {
-  const { item, index, hideBody } = props;
+  const { item, index, hideBody , onClick} = props;
   const card = {
     backgroundImage: `url(${item.fields.thumbnail})`,
   };
@@ -9,6 +9,8 @@ const CardNew = (props) => {
     <div
       className={`${item.fields.thumbnail ? "card-new" : "card-new-text"}`}
       style={item.fields.thumbnail ? card : null}
+      index = {index}
+      onClick = {onClick}
     >
       <div className="card-new-info">
         <h3 className="title">{item.webTitle}</h3>

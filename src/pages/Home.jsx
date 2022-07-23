@@ -6,20 +6,24 @@ import Button from "../components/Button";
 import Select from "../components/Select";
 import logo from "../assests/images/logo.png";
 import Search from "../components/icons/Search";
+import Loading from "../components/Loading";
+import PageHeader from "../components/PageHeader";
+import Artical from "../components/Artical";
 
 const Home = () => {
   const [allData, setAllData] = useState([]);
   const [sportData, setSportData] = useState([]);
+  const [searchData, setSearchData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [filter, setFilter] = useState("newest");
+  const [sort, setsort] = useState("newest");
   const [searchValue, setSearchValue] = useState("");
+  const [articalData, setArticalData] = useState();
   const [showTopStories, setShowTopStories] = useState(true);
   const [showSearch, setshowSearch] = useState(false);
   const [showBookMark, setShowBookMark] = useState(false);
-  const [singleNew, setSingleNew] = useState();
-  const [newId, setNewId] = useState("");
+  const [showArtical, setShowArtical] = useState(false);
 
-  const [bookmarkText, setBookmardText] = useState("Add Bookmark");
+  const [bookmarkText, setBookmarkText] = useState("add bookmark");
 
   const API_URL = "https://content.guardianapis.com";
   const API_KEY = "7b979b22-ab7e-4d58-b00a-8c747f8fc795";
@@ -28,112 +32,99 @@ const Home = () => {
     if (searchValue) {
       setShowTopStories(false);
       setShowBookMark(false);
+      setShowArtical(false);
       setshowSearch(true);
     } else {
       setShowTopStories(true);
     }
   };
-
   const showTopSection = () => {
     setShowTopStories(true);
     setshowSearch(false);
+    setShowBookMark(false);
+    setShowArtical(false);
+
     setSearchValue("");
   };
-
-  const handelChange = (e) => {
-    setFilter(e.target.value);
-  };
-
   const showBookMarkSection = () => {
     setShowTopStories(false);
     setshowSearch(false);
     setShowBookMark(true);
+    setShowArtical(false);
   };
-  const showSingleNew = (item) => {
-    setNewId(item.id);
+  const handelArtical = async (item) => {
+    setLoading(true);
+    const responseArticalData = await axios.get(
+      `${API_URL}/search?ids=${item}&api-key=${API_KEY}&show-fields=all`
+    );
+    setArticalData(responseArticalData.data.response.results[0]);
+    setShowTopStories(false);
+    setShowBookMark(false);
+    setshowSearch(false);
+    setShowArtical(true);
+    setLoading(false);
   };
+  const handelChange = (e) => {
+    setsort(e.target.value);
+  };
+  const addToBookmarkList = () => {
+    setBookmarkText("remove bookmark");
+
+  };
+
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
       const responseAllData = await axios.get(
-        `${API_URL}/search?order-by=${filter}&q=${searchValue}&api-key=${API_KEY}&show-fields=all`
+        `${API_URL}/search?order-by=${sort}&q=${searchValue}&api-key=${API_KEY}&show-fields=all`
       );
       const responseSportData = await axios.get(
-        `${API_URL}/search?section=sport&order-by=${filter}&api-key=${API_KEY}&show-fields=all`
+        `${API_URL}/search?section=sport&order-by=${sort}&api-key=${API_KEY}&show-fields=all`
       );
+
       setAllData(responseAllData.data.response.results);
       setSportData(responseSportData.data.response.results);
 
-      setLoading(false);
       showSearchSection();
+      setLoading(false);
     };
     loadNews();
-  }, [searchValue, filter]);
+  }, [searchValue, sort]);
 
   console.log("data", allData);
   console.log("searchValue", searchValue);
   console.log("sport", sportData);
-  console.log("filterValue", filter);
+  console.log("sortValue", sort);
   console.log("showBookMark", showBookMark);
-  console.log("newId", newId);
+  console.log("bookmarkText", bookmarkText);
+  console.log("articalxxxxxxxxxxxxxxxxxxxId", articalData);
 
   return (
     <div className="home-page">
-      <div className="header">
-        <div className="container">
-          <div className="logo" onClick={showTopSection}>
-            <img src={logo} alt="logo" />
-          </div>
-          <div className="search-box">
-            <input
-              type="text"
-              placeholder="Search all news"
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-            />
-            <div>
-              <Search />
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Header of the page include logo (onclick back to the top stories section home page*) and search box  */}
+      <Header
+        onClick={showTopSection}
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+      />
       <div className="container">
+        {/* loading before fetch rendering  */}
         {loading ? (
-          <div id="wrapper">
-            <div class="profile-main-loader">
-              <div class="loader">
-                <svg class="circular-loader" viewBox="25 25 50 50">
-                  <circle
-                    class="loader-path"
-                    cx="50"
-                    cy="50"
-                    r="20"
-                    fill="none"
-                    stroke="#09357B"
-                    stroke-width="2"
-                  />
-                </svg>
-              </div>
-            </div>
-          </div>
+          <Loading />
         ) : (
           <div className="page-padding">
-            {/* <PageHeader title={pageTitle} /> */}
             {showTopStories && (
               <div className="top-stories-section">
-                <div className="page-header">
-                  <h1 className="title">Top Stories</h1>
-                  <div>
-                    <Button
-                      onClick={showBookMarkSection}
-                      bookmarkText={bookmarkText}
-                    />
-                    <Select onChange={handelChange} filter={filter} />
-                  </div>
-                </div>
+                <PageHeader
+                  title="Top Stories"
+                  onClick={showBookMarkSection}
+                  bookmarkText="view bookmark"
+                  onChange={handelChange}
+                  sort={sort}
+                />
                 <section className="one-grid">
                   {allData?.slice(0, 5).map((item, index) => (
-                    <div onClick={() => setNewId(item.id)} >
+                    <div onClick={() => handelArtical(item.id)}>
                       <CardNew item={item} index={index} />
                     </div>
                   ))}
@@ -155,7 +146,9 @@ const Home = () => {
                 </section>
                 <section className="second-grid">
                   {allData?.slice(5, 8).map((item, index) => (
-                    <CardNew item={item} index={index} />
+                    <div onClick={() => handelArtical(item.id)}>
+                      <CardNew item={item} index={index} />
+                    </div>
                   ))}
                   {/* <div className="one">
                 <CardNew cardInfo={cardInfo} />
@@ -171,7 +164,9 @@ const Home = () => {
                   <h1>sports</h1>
                   <div className="second-grid">
                     {sportData?.slice(0, 3).map((item, index) => (
-                      <CardNew item={item} index={index} hideBody={true} />
+                      <div onClick={() => handelArtical(item.id)}>
+                        <CardNew item={item} index={index} hideBody={true} />
+                      </div>
                     ))}
                   </div>
 
@@ -192,37 +187,43 @@ const Home = () => {
             )}
             {showSearch && (
               <div className="search-section">
-                <div className="page-header">
-                  <h1 className="title">Search Result</h1>
-                  <div>
-                    <Button
-                      onClick={showBookMarkSection}
-                      bookmarkText={bookmarkText}
-                    />
-                    <Select onChange={handelChange} filter={filter} />
-                  </div>
-                </div>
+                <PageHeader
+                  title="Search Result"
+                  onClick={showBookMarkSection}
+                  bookmarkText="view bookmark"
+                  onChange={handelChange}
+                  sort={sort}
+                />
                 <section className="second-grid">
                   {allData?.map((item, index) => (
-                    <CardNew item={item} index={index} />
+                    <div onClick={() => handelArtical(item.id)}>
+                      <CardNew item={item} index={index} />
+                    </div>
                   ))}
                 </section>
               </div>
             )}
             {showBookMark && (
               <div className="bookmark-section">
-                <div className="page-header">
-                  <h1 className="title">All Bookmark</h1>
-                  <div>
-                    <Select onChange={handelChange} filter={filter} />
-                  </div>
-                </div>
+                <PageHeader
+                  title="All Bookmark"
+                  onChange={handelChange}
+                  sort={sort}
+                />
                 <section className="second-grid">
                   {allData?.map((item, index) => (
-                    <CardNew item={item} index={index} />
+                      <CardNew item={item} index={index} onClick={() => handelArtical(item.id)}/>
+  
                   ))}
                 </section>
               </div>
+            )}
+            {showArtical && (
+              <Artical
+                onClick={addToBookmarkList}
+                bookmarkText={bookmarkText}
+                articalData={articalData}
+              />
             )}
           </div>
         )}
