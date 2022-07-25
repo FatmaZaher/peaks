@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import CardNew from "../components/CardNew";
+import CardNewText from "../components/CardNewText";
 import Button from "../components/Button";
 import Select from "../components/Select";
 import logo from "../assests/images/logo.png";
@@ -9,6 +10,8 @@ import Search from "../components/icons/Search";
 import Loading from "../components/Loading";
 import PageHeader from "../components/PageHeader";
 import Artical from "../components/Artical";
+
+import { BookContext } from "../contexts/BookContext";
 
 const Home = () => {
   const [allData, setAllData] = useState([]);
@@ -24,6 +27,7 @@ const Home = () => {
   const [showArtical, setShowArtical] = useState(false);
 
   const [bookmarkText, setBookmarkText] = useState("add bookmark");
+  const [bookMarkList, setBookMarkList] = useState([]);
 
   const API_URL = "https://content.guardianapis.com";
   const API_KEY = "7b979b22-ab7e-4d58-b00a-8c747f8fc795";
@@ -67,16 +71,34 @@ const Home = () => {
   const handelChange = (e) => {
     setsort(e.target.value);
   };
+
+  const { dispatch, articals } = useContext(BookContext);
+
   const addToBookmarkList = () => {
     setBookmarkText("remove bookmark");
+    // setBookMarkList([...bookMarkList, articalData]);
+    // dispatch({ type: "ADD_BOOK", artical: articalData });
 
+    // setBookMarkList(articals);
+
+   
+    dispatch({ type: "REMOVE_BOOK", id: articalData.id });
+
+    // bookMarkList?.map((item) => {
+    //   if (item.id == articalData.id) {
+    //   } else {
+    //   }
+    // });
+    // bookMarkList.push('sdfdfdf')
   };
+  const remove = () => {
+  }
 
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
       const responseAllData = await axios.get(
-        `${API_URL}/search?order-by=${sort}&q=${searchValue}&api-key=${API_KEY}&show-fields=all`
+        `${API_URL}/search?section=news&order-by=${sort}&page-size=15&q=${searchValue}&api-key=${API_KEY}&show-fields=all`
       );
       const responseSportData = await axios.get(
         `${API_URL}/search?section=sport&order-by=${sort}&api-key=${API_KEY}&show-fields=all`
@@ -85,19 +107,23 @@ const Home = () => {
       setAllData(responseAllData.data.response.results);
       setSportData(responseSportData.data.response.results);
 
+      setBookMarkList(articals);
+
       showSearchSection();
       setLoading(false);
     };
     loadNews();
-  }, [searchValue, sort]);
+  }, [searchValue, sort, articals]);
 
   console.log("data", allData);
-  console.log("searchValue", searchValue);
-  console.log("sport", sportData);
-  console.log("sortValue", sort);
-  console.log("showBookMark", showBookMark);
-  console.log("bookmarkText", bookmarkText);
+  // console.log("searchValue", searchValue);
+  // console.log("sport", sportData);
+  // console.log("sortValue", sort);
+  // console.log("showBookMark", showBookMark);
+  // console.log("bookmarkText", bookmarkText);
   console.log("articalxxxxxxxxxxxxxxxxxxxId", articalData);
+  // console.log("bookMarkList", bookMarkList);
+  console.log("bookMarkList", bookMarkList);
 
   return (
     <div className="home-page">
@@ -122,50 +148,52 @@ const Home = () => {
                   onChange={handelChange}
                   sort={sort}
                 />
-                <section className="one-grid">
-                  {allData?.slice(0, 5).map((item, index) => (
-                    <div onClick={() => handelArtical(item.id)}>
-                      <CardNew item={item} index={index} />
-                    </div>
-                  ))}
-                  {/* <div className="one style1">
-                <CardNew cardInfo={cardInfo} />
-              </div>
-              <div className="two style2">
-                <CardNew cardInfo={cardInfo} />
-              </div>
-              <div className="three style2">
-                <CardNew cardInfo={cardInfo} />
-              </div>
-              <div className="four style2">
-                <CardNewText cardInfo={cardInfo} />
-              </div>
-              <div className="five style2">
-                <CardNewText cardInfo={cardInfo} />
-              </div> */}
-                </section>
-                <section className="second-grid">
-                  {allData?.slice(5, 8).map((item, index) => (
-                    <div onClick={() => handelArtical(item.id)}>
-                      <CardNew item={item} index={index} />
-                    </div>
-                  ))}
-                  {/* <div className="one">
-                <CardNew cardInfo={cardInfo} />
-              </div>
-              <div className="one">
-                <CardNew cardInfo={cardInfo} />
-              </div>
-              <div className="one">
-                <CardNew cardInfo={cardInfo} />
-              </div> */}
-                </section>
-                <section className="news-section">
-                  <h1>sports</h1>
-                  <div className="second-grid">
-                    {sportData?.slice(0, 3).map((item, index) => (
+                <div className="grid_wrap">
+                  <div className="grid">
+                    <section className="grid_wrap first-grid">
+                      <div className="grid">
+                        {allData?.slice(0, 1).map((item, index) => (
+                          <div onClick={() => handelArtical(item.id)}>
+                            <CardNew
+                              item={item}
+                              index={index}
+                              showBody={true}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                    <section className="grid_wrap second-grid">
+                      <div className="grid">
+                        {allData?.slice(1, 3).map((item, index) => (
+                          <div onClick={() => handelArtical(item.id)}>
+                            <CardNew item={item} index={index} />
+                          </div>
+                        ))}
+                        {allData?.slice(3, 5).map((item, index) => (
+                          <div onClick={() => handelArtical(item.id)}>
+                            <CardNewText item={item} index={index} />
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  </div>
+                </div>
+                <section className="grid_wrap">
+                  <div className="grid">
+                    {allData?.slice(-3).map((item, index) => (
                       <div onClick={() => handelArtical(item.id)}>
-                        <CardNew item={item} index={index} hideBody={true} />
+                        <CardNew item={item} index={index} showBody={true} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+                <section className="grid_wrap">
+                  <h1>sports</h1>
+                  <div className="grid">
+                    {sportData?.slice(-3).map((item, index) => (
+                      <div onClick={() => handelArtical(item.id)}>
+                        <CardNew item={item} index={index} />
                       </div>
                     ))}
                   </div>
@@ -194,12 +222,14 @@ const Home = () => {
                   onChange={handelChange}
                   sort={sort}
                 />
-                <section className="second-grid">
-                  {allData?.map((item, index) => (
-                    <div onClick={() => handelArtical(item.id)}>
-                      <CardNew item={item} index={index} />
-                    </div>
-                  ))}
+                <section className="grid_wrap">
+                  <div className="grid">
+                    {allData?.map((item, index) => (
+                      <div onClick={() => handelArtical(item.id)}>
+                        <CardNew item={item} index={index} />
+                      </div>
+                    ))}
+                  </div>
                 </section>
               </div>
             )}
@@ -210,20 +240,26 @@ const Home = () => {
                   onChange={handelChange}
                   sort={sort}
                 />
-                <section className="second-grid">
-                  {allData?.map((item, index) => (
-                      <CardNew item={item} index={index} onClick={() => handelArtical(item.id)}/>
-  
-                  ))}
+                <section className="grid_wrap">
+                  {/*  */}
+                  <div className="grid">
+                    {bookMarkList?.map((item, index) => (
+                      <CardNew
+                        item={item.artical}
+                        index={index}
+                        onClick={() => handelArtical(item.artical.id)}
+                      />
+                    ))}
+                  </div>
                 </section>
               </div>
             )}
             {showArtical && (
-              <Artical
-                onClick={addToBookmarkList}
-                bookmarkText={bookmarkText}
-                articalData={articalData}
-              />
+                <Artical
+                  onClick={addToBookmarkList}
+                  bookmarkText={bookmarkText}
+                  articalData={articalData}
+                />
             )}
           </div>
         )}

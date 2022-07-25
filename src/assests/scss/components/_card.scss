@@ -17,10 +17,15 @@
 
 
         .title {
-            margin-bottom: 8px;
+            font-weight: 700;
             font-size: 20px;
             line-height: 29px;
-            letter-spacing: 0.07px;
+            letter-spacing: .07px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin: 0;
         }
 
         p {
@@ -33,14 +38,11 @@
 }
 
 .card-new-text {
-    height: 100%;
-    width: 255px;
     background: $main-color;
     color: $white-color;
     padding: $padding-card;
-    height: 255px;
+    height: 138px;
     overflow: hidden;
-    margin-bottom: 50px;
     cursor: pointer;
 
     .title {
@@ -57,4 +59,12 @@
 
 p.hide-body {
     display: none;
+}
+.second-grid{
+    .card-new {
+        height: 255px;
+        // .card-new-info{
+        //     height: 45%;
+        // }
+    } 
 }

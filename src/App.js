@@ -1,12 +1,15 @@
 
 import './App.scss';
 import Home from "./pages/Home"
+import BookContextProvider from './contexts/BookContext';
+
 
 function App() {
   return (
     <div className="App">
-      <Home />
-      {/* sdfjsdhfsdjf */}
+      <BookContextProvider>
+        <Home />
+      </BookContextProvider>
     </div>
   );
 }

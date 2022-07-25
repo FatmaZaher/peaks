@@ -1,8 +1,40 @@
 .artical-section {
+    button {
+        margin-bottom: 18px
+    }
+
+    .date {
+        font-family: 'Roboto';
+        margin-bottom: 18px;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 31px;
+        letter-spacing: 0.83px;
+        text-transform: uppercase;
+        color: rgba(0, 0, 0, 0.87);
+    }
+
+    >h1 {
+        font-weight: 700;
+        font-size: 34px;
+        line-height: 39px;
+        letter-spacing: 0.07px;
+        margin-bottom: 18px;
+    }
+
+    >h2 {
+        font-weight: 700;
+        font-size: 28px;
+        line-height: 26px;
+        margin-bottom: 18px;
+        letter-spacing: 0.07px;
+    }
+
     .artical-body {
         @include flex(start, space-between);
-        .block{
-            margin-bottom: 20px;
+
+        .block {
+            margin-bottom: 30px;
         }
     }
 
