@@ -1,39 +1,41 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import CardNew from "../components/CardNew";
 import CardNewText from "../components/CardNewText";
-import Button from "../components/Button";
-import Select from "../components/Select";
-import logo from "../assests/images/logo.png";
-import Search from "../components/icons/Search";
 import Loading from "../components/Loading";
 import PageHeader from "../components/PageHeader";
-import Artical from "../components/Artical";
-
-import { BookContext } from "../contexts/BookContext";
+import Artical from "../components/sections/Artical";
+import SearchSection from "../components/sections/SearchSection";
+import { GlobalContext } from "../contexts/BookContext";
+import Footer from "../components/Footer";
 
 const Home = () => {
   const [allData, setAllData] = useState([]);
   const [sportData, setSportData] = useState([]);
-  const [searchData, setSearchData] = useState([]);
+  const [cultureData, setCultureData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [sort, setsort] = useState("newest");
-  const [searchValue, setSearchValue] = useState("");
   const [articalData, setArticalData] = useState();
   const [showTopStories, setShowTopStories] = useState(true);
   const [showSearch, setshowSearch] = useState(false);
   const [showBookMark, setShowBookMark] = useState(false);
   const [showArtical, setShowArtical] = useState(false);
-
   const [bookmarkText, setBookmarkText] = useState("add bookmark");
-  const [bookMarkList, setBookMarkList] = useState([]);
+  const [isInBookList, setIsInBookList] = useState(false);
+  const [showSnack, setShowSnack] = useState(false);
+  const [typeSnack, setTypeSnack] = useState();
+  const { bookMarkList, addArticleToBookList, removeArticleFromBookList } =
+    useContext(GlobalContext);
+  const [suggestions, setSuggestions] = useState("");
+
+  const [theSection, setTheSection] = useState("topStories");
 
   const API_URL = "https://content.guardianapis.com";
   const API_KEY = "7b979b22-ab7e-4d58-b00a-8c747f8fc795";
 
-  const showSearchSection = () => {
-    if (searchValue) {
+  const showSearchSection = (value) => {
+    if (value) {
       setShowTopStories(false);
       setShowBookMark(false);
       setShowArtical(false);
@@ -47,8 +49,6 @@ const Home = () => {
     setshowSearch(false);
     setShowBookMark(false);
     setShowArtical(false);
-
-    setSearchValue("");
   };
   const showBookMarkSection = () => {
     setShowTopStories(false);
@@ -61,7 +61,19 @@ const Home = () => {
     const responseArticalData = await axios.get(
       `${API_URL}/search?ids=${item}&api-key=${API_KEY}&show-fields=all`
     );
+
+    const articleFind = () => {
+      if (bookMarkList.find((artical) => artical.id === item)) {
+        setIsInBookList(true);
+        setBookmarkText("remove bookmark");
+      } else {
+        setIsInBookList(false);
+        setBookmarkText("add bookmark");
+      }
+    };
+    articleFind();
     setArticalData(responseArticalData.data.response.results[0]);
+
     setShowTopStories(false);
     setShowBookMark(false);
     setshowSearch(false);
@@ -71,199 +83,218 @@ const Home = () => {
   const handelChange = (e) => {
     setsort(e.target.value);
   };
+  const handleBookmarkList = () => {
+    if (isInBookList) {
+      removeArticleFromBookList(articalData.id);
+      setBookmarkText("add bookmark");
+      setIsInBookList(false);
+      setTypeSnack("fail");
+      setShowSnack(true);
+      setTimeout(() => {
+        setShowSnack(false);
+      }, 1000);
+    } else {
+      addArticleToBookList(articalData);
+      setBookmarkText("remove bookmark");
+      setIsInBookList(true);
+      setShowSnack(true);
+      setTypeSnack("success");
+      setTimeout(() => {
+        setShowSnack(false);
+      }, 1000);
+    }
 
-  const { dispatch, articals } = useContext(BookContext);
-
-  const addToBookmarkList = () => {
-    setBookmarkText("remove bookmark");
-    // setBookMarkList([...bookMarkList, articalData]);
-    // dispatch({ type: "ADD_BOOK", artical: articalData });
-
-    // setBookMarkList(articals);
-
-   
-    dispatch({ type: "REMOVE_BOOK", id: articalData.id });
-
-    // bookMarkList?.map((item) => {
-    //   if (item.id == articalData.id) {
-    //   } else {
-    //   }
-    // });
-    // bookMarkList.push('sdfdfdf')
+    console.log("articalData.id", articalData);
   };
-  const remove = () => {
-  }
+
+  const debounce = (func) => {
+    let timer;
+    return function (...args) {
+      const context = this;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        timer = null;
+        func.apply(context, args);
+      }, 500);
+    };
+  };
+  const handleChange = async (value) => {
+    setLoading(true);
+    const responseSearchData = await axios.get(
+      `${API_URL}/search?order-by=${sort}&page-size=15&q=${value}&api-key=${API_KEY}&show-fields=all`
+    );
+    setSuggestions(responseSearchData.data.response.results);
+    setLoading(false);
+    showSearchSection(value);
+  };
+
+  const optimizedFn = useCallback(debounce(handleChange), []);
 
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
       const responseAllData = await axios.get(
-        `${API_URL}/search?section=news&order-by=${sort}&page-size=15&q=${searchValue}&api-key=${API_KEY}&show-fields=all`
+        `${API_URL}/search?section=news&order-by=${sort}&page-size=15&api-key=${API_KEY}&show-fields=all`
       );
       const responseSportData = await axios.get(
         `${API_URL}/search?section=sport&order-by=${sort}&api-key=${API_KEY}&show-fields=all`
       );
+      const responseCultureData = await axios.get(
+        `${API_URL}/search?section=culture&order-by=${sort}&api-key=${API_KEY}&show-fields=all`
+      );
 
       setAllData(responseAllData.data.response.results);
       setSportData(responseSportData.data.response.results);
-
-      setBookMarkList(articals);
-
-      showSearchSection();
+      setCultureData(responseCultureData.data.response.results);
       setLoading(false);
     };
     loadNews();
-  }, [searchValue, sort, articals]);
-
-  console.log("data", allData);
-  // console.log("searchValue", searchValue);
-  // console.log("sport", sportData);
-  // console.log("sortValue", sort);
-  // console.log("showBookMark", showBookMark);
-  // console.log("bookmarkText", bookmarkText);
-  console.log("articalxxxxxxxxxxxxxxxxxxxId", articalData);
-  // console.log("bookMarkList", bookMarkList);
-  console.log("bookMarkList", bookMarkList);
-
+  }, [sort]);
+  console.log("suggestions", suggestions);
   return (
     <div className="home-page">
-      {/* Header of the page include logo (onclick back to the top stories section home page*) and search box  */}
       <Header
         onClick={showTopSection}
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
+        onChange={(e) => optimizedFn(e.target.value)}
       />
-      <div className="container">
-        {/* loading before fetch rendering  */}
-        {loading ? (
-          <Loading />
-        ) : (
-          <div className="page-padding">
-            {showTopStories && (
-              <div className="top-stories-section">
-                <PageHeader
-                  title="Top Stories"
-                  onClick={showBookMarkSection}
-                  bookmarkText="view bookmark"
-                  onChange={handelChange}
-                  sort={sort}
-                />
-                <div className="grid_wrap">
-                  <div className="grid">
-                    <section className="grid_wrap first-grid">
-                      <div className="grid">
-                        {allData?.slice(0, 1).map((item, index) => (
-                          <div onClick={() => handelArtical(item.id)}>
-                            <CardNew
-                              item={item}
-                              index={index}
-                              showBody={true}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                    <section className="grid_wrap second-grid">
-                      <div className="grid">
-                        {allData?.slice(1, 3).map((item, index) => (
-                          <div onClick={() => handelArtical(item.id)}>
-                            <CardNew item={item} index={index} />
-                          </div>
-                        ))}
-                        {allData?.slice(3, 5).map((item, index) => (
-                          <div onClick={() => handelArtical(item.id)}>
-                            <CardNewText item={item} index={index} />
-                          </div>
-                        ))}
-                      </div>
-                    </section>
+      {loading ? (
+        <Loading />
+      ) : (
+        <div>
+          <div className="container">
+            <div className="page-padding">
+              {showTopStories && (
+                <div className="top-stories-section">
+                  <PageHeader
+                    title="Top Stories"
+                    onClick={showBookMarkSection}
+                    bookmarkText="view bookmark"
+                    onChange={handelChange}
+                    sort={sort}
+                  />
+                  <div className="grid_wrap">
+                    <div className="grid">
+                      <section className="grid_wrap first-grid">
+                        <div className="grid">
+                          {allData?.slice(0, 1).map((item, index) => (
+                            <div onClick={() => handelArtical(item.id)}>
+                              <CardNew
+                                item={item}
+                                index={index}
+                                showBody={true}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+                      <section className="grid_wrap second-grid">
+                        <div className="grid">
+                          {allData?.slice(1, 3).map((item, index) => (
+                            <div onClick={() => handelArtical(item.id)}>
+                              <CardNew item={item} index={index} />
+                            </div>
+                          ))}
+                          {allData?.slice(3, 5).map((item, index) => (
+                            <div onClick={() => handelArtical(item.id)}>
+                              <CardNewText item={item} index={index} />
+                            </div>
+                          ))}
+                        </div>
+                      </section>
+                    </div>
                   </div>
+                  <section className="grid_wrap">
+                    <div className="grid">
+                      {allData?.slice(-3).map((item, index) => (
+                        <div onClick={() => handelArtical(item.id)}>
+                          <CardNew item={item} index={index} showBody={true} />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                  <section className="grid_wrap">
+                    <h1>Sports</h1>
+                    <div className="grid">
+                      {sportData?.slice(-3).map((item, index) => (
+                        <div onClick={() => handelArtical(item.id)}>
+                          <CardNew item={item} index={index} />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                  <section className="grid_wrap">
+                    <h1>Culture</h1>
+                    <div className="grid">
+                      {cultureData?.slice(-3).map((item, index) => (
+                        <div onClick={() => handelArtical(item.id)}>
+                          <CardNew item={item} index={index} />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
                 </div>
-                <section className="grid_wrap">
-                  <div className="grid">
-                    {allData?.slice(-3).map((item, index) => (
-                      <div onClick={() => handelArtical(item.id)}>
-                        <CardNew item={item} index={index} showBody={true} />
-                      </div>
-                    ))}
-                  </div>
-                </section>
-                <section className="grid_wrap">
-                  <h1>sports</h1>
-                  <div className="grid">
-                    {sportData?.slice(-3).map((item, index) => (
-                      <div onClick={() => handelArtical(item.id)}>
-                        <CardNew item={item} index={index} />
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* 
-              <div className="second-grid">
-                <div className="one">
-                  <CardNew cardInfo={cardInfo} />
+              )}
+              {showSearch && (
+                <div className="search-section">
+                  <PageHeader
+                    title="Search Result"
+                    onClick={showBookMarkSection}
+                    bookmarkText="view bookmark"
+                    onChange={handelChange}
+                    sort={sort}
+                  />
+                  <section className="grid_wrap">
+                    <div className="grid">
+                      {suggestions?.map((item, index) => (
+                        <div onClick={() => handelArtical(item.id)}>
+                          <CardNew item={item} index={index} />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
                 </div>
-                <div className="one">
-                  <CardNew cardInfo={cardInfo} />
+                // <SearchSection
+                //   onClick={showBookMarkSection}
+                //   onChange={handelChange}
+                //   sort={sort}
+                //   suggestions={suggestions}
+                // />
+              )}
+              {showBookMark && (
+                <div className="bookmark-section">
+                  <PageHeader
+                    title="All Bookmark"
+                    onChange={handelChange}
+                    sort={sort}
+                  />
+                  <section className="grid_wrap">
+                    {/*  */}
+                    <div className="grid">
+                      {bookMarkList?.map((item, index) => (
+                        <CardNew
+                          item={item}
+                          index={index}
+                          onClick={() => handelArtical(item.id)}
+                        />
+                      ))}
+                    </div>
+                  </section>
                 </div>
-                <div className="one">
-                  <CardNew cardInfo={cardInfo} />
-                </div>
-              </div> */}
-                </section>
-              </div>
-            )}
-            {showSearch && (
-              <div className="search-section">
-                <PageHeader
-                  title="Search Result"
-                  onClick={showBookMarkSection}
-                  bookmarkText="view bookmark"
-                  onChange={handelChange}
-                  sort={sort}
-                />
-                <section className="grid_wrap">
-                  <div className="grid">
-                    {allData?.map((item, index) => (
-                      <div onClick={() => handelArtical(item.id)}>
-                        <CardNew item={item} index={index} />
-                      </div>
-                    ))}
-                  </div>
-                </section>
-              </div>
-            )}
-            {showBookMark && (
-              <div className="bookmark-section">
-                <PageHeader
-                  title="All Bookmark"
-                  onChange={handelChange}
-                  sort={sort}
-                />
-                <section className="grid_wrap">
-                  {/*  */}
-                  <div className="grid">
-                    {bookMarkList?.map((item, index) => (
-                      <CardNew
-                        item={item.artical}
-                        index={index}
-                        onClick={() => handelArtical(item.artical.id)}
-                      />
-                    ))}
-                  </div>
-                </section>
-              </div>
-            )}
-            {showArtical && (
+              )}
+              {showArtical && (
                 <Artical
-                  onClick={addToBookmarkList}
+                  onClick={handleBookmarkList}
                   bookmarkText={bookmarkText}
                   articalData={articalData}
+                  showSnack={showSnack}
+                  typeSnack={typeSnack}
                 />
-            )}
+              )}
+            </div>
           </div>
-        )}
-      </div>
+          <Footer />
+        </div>
+      )}
     </div>
   );
 };

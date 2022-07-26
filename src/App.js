@@ -1,15 +1,15 @@
 
 import './App.scss';
 import Home from "./pages/Home"
-import BookContextProvider from './contexts/BookContext';
+import {GlobalProvider} from './contexts/BookContext';
 
 
 function App() {
   return (
     <div className="App">
-      <BookContextProvider>
+      <GlobalProvider>
         <Home />
-      </BookContextProvider>
+      </GlobalProvider>
     </div>
   );
 }

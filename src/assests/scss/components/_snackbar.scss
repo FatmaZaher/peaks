@@ -1,0 +1,34 @@
+.snackbar {
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    color: $white-color;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 22222;
+    &.show {
+        display: block;
+    }
+    &.hide {
+        display: none;
+    }
+    span.fail{
+        svg{
+            path{
+                fill: none;
+                stroke: white;
+                stroke-width: 2;
+     
+
+            }
+        }
+    }
+    span{
+        @include flex(center, center);
+        svg{
+            margin-right: 7px;
+        }
+    }
+}

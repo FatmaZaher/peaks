@@ -1,39 +1,12 @@
-// import React from "react";
-// const BookReducer = (state, action) => {
-//   switch (action.type) {
-//     case "ADD_BOOK":
-//       return [
-//         ...state,
-//         {
-//           title: action.book.title,
-//         },
-//       ];
-//     case "REMOVE_BOOK":
-//       return state.filter((book) => book.id !== action.id);
-//     default:
-//       return state;
-//   }
-// };
-// export default BookReducer;
-import React from "react";
 
-const BookReducer = (state, action) => {
-  switch (action.type) {
-
-    case "ADD_BOOK":
- console.log(action);
-      return [
-        ...state,
-        {
-          artical: action.artical,
-        },
-        
-      ];
-    case "REMOVE_BOOK":
-      console.log(action.id);
-      return state.filter((artical)=> artical.artical.id !== action.artical.artical.id);
+const bookMarkReducer = (state, action) =>
+{
+  switch (action.type)
+  {
+    case 'ADD': return { ...state, bookList: [action.payload, ...state.bookList] };
+    case 'Remove': return { ...state, bookList: state.bookList.filter((article) => article.id !== action.payload) };
     default:
-      return state;
+      return state
   }
-};
-export default BookReducer;
+}
+export default bookMarkReducer;

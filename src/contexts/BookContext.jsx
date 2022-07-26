@@ -1,22 +1,35 @@
-import React, { createContext, useReducer, useEffect } from "react";
-import BookReducer from "../reducers/BookReducer";
-export const BookContext = createContext();
+import { createContext, useReducer, useEffect } from "react";
+import bookMarkReducer from "../reducers/BookReducer";
 
-const BookContextProvider = (props) => {
-  const [articals, dispatch] = useReducer(BookReducer, [], () => {
-    const localData = localStorage.getItem("articals");
-    return localData ? JSON.parse(localData) : [];
-  });
+const initialState = {
+  bookList: localStorage.getItem("booklist")
+    ? JSON.parse(localStorage.getItem("booklist"))
+    : [],
+};
+export const GlobalContext = createContext(initialState);
 
+export const GlobalProvider = (props) => {
+  const [state, dispatch] = useReducer(bookMarkReducer, initialState);
   useEffect(() => {
-    localStorage.setItem("articals", JSON.stringify(articals));
-    
-  }, [articals]);
-console.log(articals)
+    localStorage.setItem("booklist", JSON.stringify(state.bookList));
+  }, [state]);
+  // console.log(state, "globalState")
+  // actions
+  const addArticleToBookList = (article) => {
+    dispatch({ type: "ADD", payload: article });
+  };
+  const removeArticleFromBookList = (id) => {
+    dispatch({ type: "Remove", payload: id });
+  };
   return (
-    <BookContext.Provider value={{ articals, dispatch }}>
+    <GlobalContext.Provider
+      value={{
+        bookMarkList: state.bookList,
+        addArticleToBookList,
+        removeArticleFromBookList,
+      }}
+    >
       {props.children}
-    </BookContext.Provider>
+    </GlobalContext.Provider>
   );
 };
-export default BookContextProvider;

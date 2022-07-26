@@ -1,8 +1,9 @@
 import React from "react";
-import Button from "./Button";
+import Button from "../Button";
+import Snackbar from "../Snackbar";
 
 const Artical = (props) => {
-  const { articalData, onClick, bookmarkText } = props;
+  const { articalData, onClick, bookmarkText, showSnack, typeSnack } = props;
   const width55 = {
     width: "55%",
   };
@@ -18,14 +19,15 @@ const Artical = (props) => {
           dangerouslySetInnerHTML={{ __html: articalData.fields.body }}
         />
         {articalData.fields.thumbnail && (
-            <div
-              className="artical-media"
-              style={articalData.fields.thumbnail ? null : null}
-            >
-              <img src={articalData.fields.thumbnail} alt="" />
-            </div>
-          )}
+          <div
+            className="artical-media"
+            style={articalData.fields.thumbnail ? null : null}
+          >
+            <img src={articalData.fields.thumbnail} alt="" />
+          </div>
+        )}
       </div>
+      <Snackbar showSnack={showSnack} typeSnack={typeSnack} />
     </div>
   );
 };

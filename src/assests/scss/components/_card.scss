@@ -8,6 +8,7 @@
     @include flex(end, center);
     overflow: hidden;
     cursor: pointer;
+    position: relative;
 
     .card-new-info {
         height: 33%;
@@ -35,6 +36,9 @@
             letter-spacing: 0.1px;
         }
     }
+    @include mobile{
+        height: 350px !important;
+    }
 }
 
 .card-new-text {
@@ -44,7 +48,7 @@
     height: 138px;
     overflow: hidden;
     cursor: pointer;
-
+    position: relative;
     .title {
         font-weight: 700;
         font-size: 18px;
@@ -60,11 +64,38 @@
 p.hide-body {
     display: none;
 }
-.second-grid{
+
+.second-grid {
     .card-new {
         height: 255px;
-        // .card-new-info{
-        //     height: 45%;
-        // }
-    } 
+    }
+}
+
+.first-grid {
+    >div {
+        height: 100%;
+
+        .card-new {
+            height: 100%;
+        }
+    }
+}
+
+.sectionColor{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: $green-color;
+    &.red{
+        background-color: $red-color;
+    }
+    &.yallow{
+        background-color: $yallow-color;
+    }
+    &.blue{
+        background-color: $blue-color;
+    }
+
 }

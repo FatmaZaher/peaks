@@ -3,7 +3,7 @@ import logo from "../assests/images/logo.png";
 import Search from "./icons/Search";
 
 const Header = (props) => {
-  const { onClick, onChange, value } = props;
+  const { onClick, onChange } = props;
   return (
     <div className="header">
       <div className="container">
@@ -14,7 +14,6 @@ const Header = (props) => {
           <input
             type="text"
             placeholder="Search all news"
-            value={value}
             onChange={onChange}
           />
           <div>

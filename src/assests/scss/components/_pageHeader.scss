@@ -1,5 +1,4 @@
 .page-header {
-    margin-bottom: $margin-bottom;
     @include flex(center, space-between);
 
     >div {
@@ -7,8 +6,15 @@
         gap: 15px;
 
     }
-    .title{
+
+    .title {
         font-size: 48px;
+    }
+
+    @include mobile {
+        .title {
+            font-size: 30px
+        }
     }
 
 }
