@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+} from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import CardNew from "../components/CardNew";
@@ -6,7 +11,6 @@ import CardNewText from "../components/CardNewText";
 import Loading from "../components/Loading";
 import PageHeader from "../components/PageHeader";
 import Artical from "../components/sections/Artical";
-import SearchSection from "../components/sections/SearchSection";
 import { GlobalContext } from "../contexts/BookContext";
 import Footer from "../components/Footer";
 
@@ -28,8 +32,11 @@ const Home = () => {
   const { bookMarkList, addArticleToBookList, removeArticleFromBookList } =
     useContext(GlobalContext);
   const [suggestions, setSuggestions] = useState("");
+  const [page, setPage] = useState(1);
+  const [isFetching, setIsFetching] = useState(false);
+  const [valueSearch, setValueSearch] = useState("");
 
-  const [theSection, setTheSection] = useState("topStories");
+  // const [theSection, setTheSection] = useState("topStories");
 
   const API_URL = "https://content.guardianapis.com";
   const API_KEY = "7b979b22-ab7e-4d58-b00a-8c747f8fc795";
@@ -118,14 +125,35 @@ const Home = () => {
       }, 500);
     };
   };
+
+  const moreData = () => {
+    const url = `${API_URL}/search?page-size=15&q=${valueSearch}&page=${page}&api-key=${API_KEY}&show-fields=all`;
+    axios.get(url).then((res) => {
+      setSuggestions([...suggestions, ...res.data.response.results]);
+      setPage(page + 1);
+      setIsFetching(false);
+    });
+  };
+
+  const isScrolling = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop + 1 >=
+      document.documentElement.scrollHeight
+    ) {
+          setIsFetching(true);
+    }
+  };
+
   const handleChange = async (value) => {
     setLoading(true);
     const responseSearchData = await axios.get(
-      `${API_URL}/search?order-by=${sort}&page-size=15&q=${value}&api-key=${API_KEY}&show-fields=all`
+      `${API_URL}/search?page-size=15&q=${value}&api-key=${API_KEY}&show-fields=all`
     );
     setSuggestions(responseSearchData.data.response.results);
+    setValueSearch(value);
     setLoading(false);
     showSearchSection(value);
+    window.addEventListener("scroll", isScrolling);
   };
 
   const optimizedFn = useCallback(debounce(handleChange), []);
@@ -142,15 +170,19 @@ const Home = () => {
       const responseCultureData = await axios.get(
         `${API_URL}/search?section=culture&order-by=${sort}&api-key=${API_KEY}&show-fields=all`
       );
-
+      setLoading(false);
       setAllData(responseAllData.data.response.results);
       setSportData(responseSportData.data.response.results);
       setCultureData(responseCultureData.data.response.results);
-      setLoading(false);
     };
     loadNews();
   }, [sort]);
-  console.log("suggestions", suggestions);
+
+  useEffect(() => {
+    if (isFetching) {
+      moreData();
+    }
+  }, [isFetching]);
   return (
     <div className="home-page">
       <Header
@@ -253,12 +285,6 @@ const Home = () => {
                     </div>
                   </section>
                 </div>
-                // <SearchSection
-                //   onClick={showBookMarkSection}
-                //   onChange={handelChange}
-                //   sort={sort}
-                //   suggestions={suggestions}
-                // />
               )}
               {showBookMark && (
                 <div className="bookmark-section">
