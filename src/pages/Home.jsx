@@ -49,6 +49,7 @@ const Home = () => {
       setshowSearch(true);
     } else {
       setShowTopStories(true);
+      setSuggestions([])
     }
   };
   const showTopSection = () => {
@@ -56,12 +57,14 @@ const Home = () => {
     setshowSearch(false);
     setShowBookMark(false);
     setShowArtical(false);
+    setSuggestions([])
   };
   const showBookMarkSection = () => {
     setShowTopStories(false);
     setshowSearch(false);
     setShowBookMark(true);
     setShowArtical(false);
+    setSuggestions([])
   };
   const handelArtical = async (item) => {
     setLoading(true);
@@ -80,11 +83,11 @@ const Home = () => {
     };
     articleFind();
     setArticalData(responseArticalData.data.response.results[0]);
-
     setShowTopStories(false);
     setShowBookMark(false);
     setshowSearch(false);
     setShowArtical(true);
+    setSuggestions([])
     setLoading(false);
   };
   const handelChange = (e) => {
@@ -177,7 +180,7 @@ const Home = () => {
     };
     loadNews();
   }, [sort]);
-
+console.log("suggestions", suggestions)
   useEffect(() => {
     if (isFetching) {
       moreData();
