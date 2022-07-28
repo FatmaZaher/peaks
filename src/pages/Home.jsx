@@ -156,6 +156,21 @@ const Home = () => {
 
   const optimizedFn = useCallback(debounce(handleChange), []);
 
+  function HandleCard(data) {
+    return (
+      <div className="">
+        <section className="grid_wrap">
+          <div className="grid">
+            {data.map((item, index) => (
+              <div onClick={() => handelArtical(item.id)}>
+                <CardNew item={item} index={index} />
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
@@ -274,15 +289,7 @@ const Home = () => {
                     onChange={handelChange}
                     sort={sort}
                   />
-                  <section className="grid_wrap">
-                    <div className="grid">
-                      {suggestions?.map((item, index) => (
-                        <div onClick={() => handelArtical(item.id)}>
-                          <CardNew item={item} index={index} />
-                        </div>
-                      ))}
-                    </div>
-                  </section>
+                  {HandleCard(suggestions)}
                 </div>
               )}
               {showBookMark && (
@@ -292,17 +299,7 @@ const Home = () => {
                     onChange={handelChange}
                     sort={sort}
                   />
-                  <section className="grid_wrap">
-                    <div className="grid">
-                      {bookMarkList?.map((item, index) => (
-                        <CardNew
-                          item={item}
-                          index={index}
-                          onClick={() => handelArtical(item.id)}
-                        />
-                      ))}
-                    </div>
-                  </section>
+                  {HandleCard(bookMarkList)}
                 </div>
               )}
               {showArtical && (
