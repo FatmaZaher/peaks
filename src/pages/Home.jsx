@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useContext,
-  useCallback,
-} from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import axios from "axios";
 import Header from "../components/Header";
 import CardNew from "../components/CardNew";
@@ -49,7 +44,7 @@ const Home = () => {
       setshowSearch(true);
     } else {
       setShowTopStories(true);
-      setSuggestions([])
+      setSuggestions([]);
     }
   };
   const showTopSection = () => {
@@ -57,14 +52,14 @@ const Home = () => {
     setshowSearch(false);
     setShowBookMark(false);
     setShowArtical(false);
-    setSuggestions([])
+    setSuggestions([]);
   };
   const showBookMarkSection = () => {
     setShowTopStories(false);
     setshowSearch(false);
     setShowBookMark(true);
     setShowArtical(false);
-    setSuggestions([])
+    setSuggestions([]);
   };
   const handelArtical = async (item) => {
     setLoading(true);
@@ -87,7 +82,7 @@ const Home = () => {
     setShowBookMark(false);
     setshowSearch(false);
     setShowArtical(true);
-    setSuggestions([])
+    setSuggestions([]);
     setLoading(false);
   };
   const handelChange = (e) => {
@@ -143,7 +138,7 @@ const Home = () => {
       window.innerHeight + document.documentElement.scrollTop + 1 >=
       document.documentElement.scrollHeight
     ) {
-          setIsFetching(true);
+      setIsFetching(true);
     }
   };
 
@@ -180,12 +175,13 @@ const Home = () => {
     };
     loadNews();
   }, [sort]);
-console.log("suggestions", suggestions)
+
   useEffect(() => {
     if (isFetching) {
       moreData();
     }
   }, [isFetching]);
+
   return (
     <div className="home-page">
       <Header
@@ -297,7 +293,6 @@ console.log("suggestions", suggestions)
                     sort={sort}
                   />
                   <section className="grid_wrap">
-                    {/*  */}
                     <div className="grid">
                       {bookMarkList?.map((item, index) => (
                         <CardNew
