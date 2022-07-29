@@ -16,10 +16,6 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const [sort, setsort] = useState("newest");
   const [articalData, setArticalData] = useState();
-  const [showTopStories, setShowTopStories] = useState(true);
-  const [showSearch, setshowSearch] = useState(false);
-  const [showBookMark, setShowBookMark] = useState(false);
-  const [showArtical, setShowArtical] = useState(false);
   const [bookmarkText, setBookmarkText] = useState("add bookmark");
   const [isInBookList, setIsInBookList] = useState(false);
   const [showSnack, setShowSnack] = useState(false);
@@ -31,36 +27,11 @@ const Home = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [valueSearch, setValueSearch] = useState("");
 
-  // const [theSection, setTheSection] = useState("topStories");
+  const [theSection, setTheSection] = useState("topStories");
 
   const API_URL = "https://content.guardianapis.com";
   const API_KEY = "7b979b22-ab7e-4d58-b00a-8c747f8fc795";
 
-  const showSearchSection = (value) => {
-    if (value) {
-      setShowTopStories(false);
-      setShowBookMark(false);
-      setShowArtical(false);
-      setshowSearch(true);
-    } else {
-      setShowTopStories(true);
-      setSuggestions([]);
-    }
-  };
-  const showTopSection = () => {
-    setShowTopStories(true);
-    setshowSearch(false);
-    setShowBookMark(false);
-    setShowArtical(false);
-    setSuggestions([]);
-  };
-  const showBookMarkSection = () => {
-    setShowTopStories(false);
-    setshowSearch(false);
-    setShowBookMark(true);
-    setShowArtical(false);
-    setSuggestions([]);
-  };
   const handelArtical = async (item) => {
     setLoading(true);
     const responseArticalData = await axios.get(
@@ -78,10 +49,7 @@ const Home = () => {
     };
     articleFind();
     setArticalData(responseArticalData.data.response.results[0]);
-    setShowTopStories(false);
-    setShowBookMark(false);
-    setshowSearch(false);
-    setShowArtical(true);
+    setTheSection("artical");
     setSuggestions([]);
     setLoading(false);
   };
@@ -108,8 +76,6 @@ const Home = () => {
         setShowSnack(false);
       }, 1000);
     }
-
-    console.log("articalData.id", articalData);
   };
 
   const debounce = (func) => {
@@ -123,16 +89,6 @@ const Home = () => {
       }, 500);
     };
   };
-
-  const moreData = () => {
-    const url = `${API_URL}/search?page-size=15&q=${valueSearch}&page=${page}&api-key=${API_KEY}&show-fields=all`;
-    axios.get(url).then((res) => {
-      setSuggestions([...suggestions, ...res.data.response.results]);
-      setPage(page + 1);
-      setIsFetching(false);
-    });
-  };
-
   const isScrolling = () => {
     if (
       window.innerHeight + document.documentElement.scrollTop + 1 >=
@@ -142,21 +98,37 @@ const Home = () => {
     }
   };
 
-  const handleChange = async (value) => {
-    setLoading(true);
+  const handleSearch = async (value) => {
+    if (!isFetching) {
+      setLoading(true);
+    } else {
+      setPage(page + 1);
+      setIsFetching(false);
+    }
     const responseSearchData = await axios.get(
-      `${API_URL}/search?page-size=15&q=${value}&api-key=${API_KEY}&show-fields=all`
+      `${API_URL}/search?page-size=15&q=${value}&page=${page}&api-key=${API_KEY}&show-fields=all`
     );
-    setSuggestions(responseSearchData.data.response.results);
+    setSuggestions([
+      ...suggestions,
+      ...responseSearchData.data.response.results,
+    ]);
     setValueSearch(value);
-    setLoading(false);
-    showSearchSection(value);
+    if (!isFetching) {
+      setLoading(false);
+    }
+    if (value) {
+      setTheSection("search");
+    } else {
+      setTheSection("topStories");
+      setSuggestions([]);
+    }
     window.addEventListener("scroll", isScrolling);
   };
 
-  const optimizedFn = useCallback(debounce(handleChange), []);
+  const optimizedFn = useCallback(debounce(handleSearch), []);
 
-  function HandleCard(data) {
+  const HandleCard = (props) => {
+    const { data } = props;
     return (
       <div className="">
         <section className="grid_wrap">
@@ -170,7 +142,8 @@ const Home = () => {
         </section>
       </div>
     );
-  }
+  };
+
   useEffect(() => {
     const loadNews = async () => {
       setLoading(true);
@@ -193,14 +166,124 @@ const Home = () => {
 
   useEffect(() => {
     if (isFetching) {
-      moreData();
+      handleSearch(valueSearch);
     }
   }, [isFetching]);
 
+  const SwitchSection = () => {
+    switch (theSection) {
+      case "topStories":
+        return (
+          <div className="top-stories-section">
+            <PageHeader
+              title="Top Stories"
+              onClick={() => (setTheSection("bookmark"), setSuggestions([]))}
+              bookmarkText="view bookmark"
+              onChange={handelChange}
+              sort={sort}
+            />
+            <div className="grid_wrap">
+              <div className="grid">
+                <section className="grid_wrap first-grid">
+                  <div className="grid">
+                    {allData?.slice(0, 1).map((item, index) => (
+                      <div onClick={() => handelArtical(item.id)}>
+                        <CardNew item={item} index={index} showBody={true} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+                <section className="grid_wrap second-grid">
+                  <div className="grid">
+                    {allData?.slice(1, 3).map((item, index) => (
+                      <div onClick={() => handelArtical(item.id)}>
+                        <CardNew item={item} index={index} />
+                      </div>
+                    ))}
+                    {allData?.slice(3, 5).map((item, index) => (
+                      <div onClick={() => handelArtical(item.id)}>
+                        <CardNewText item={item} index={index} />
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            </div>
+            <section className="grid_wrap">
+              <div className="grid">
+                {allData?.slice(-3).map((item, index) => (
+                  <div onClick={() => handelArtical(item.id)}>
+                    <CardNew item={item} index={index} showBody={true} />
+                  </div>
+                ))}
+              </div>
+            </section>
+            <section className="grid_wrap">
+              <h1>Sports</h1>
+              <div className="grid">
+                {sportData?.slice(-3).map((item, index) => (
+                  <div onClick={() => handelArtical(item.id)}>
+                    <CardNew item={item} index={index} />
+                  </div>
+                ))}
+              </div>
+            </section>
+            <section className="grid_wrap">
+              <h1>Culture</h1>
+              <div className="grid">
+                {cultureData?.slice(-3).map((item, index) => (
+                  <div onClick={() => handelArtical(item.id)}>
+                    <CardNew item={item} index={index} />
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        );
+
+      case "search":
+        return (
+          <div className="search-section">
+            <PageHeader
+              title="Search Result"
+              onClick={() => (setTheSection("bookmark"), setSuggestions([]))}
+              bookmarkText="view bookmark"
+              onChange={handelChange}
+              sort={sort}
+            />
+            <HandleCard data={suggestions} />
+          </div>
+        );
+
+      case "bookmark":
+        return (
+          <div className="bookmark-section">
+            <PageHeader
+              title="All Bookmark"
+              onChange={handelChange}
+              sort={sort}
+            />
+            <HandleCard data={bookMarkList} />
+          </div>
+        );
+
+      case "artical":
+        return (
+          <Artical
+            onClick={handleBookmarkList}
+            bookmarkText={bookmarkText}
+            articalData={articalData}
+            showSnack={showSnack}
+            typeSnack={typeSnack}
+          />
+        );
+    }
+  };
+  console.log("suggestions", suggestions);
   return (
     <div className="home-page">
       <Header
-        onClick={showTopSection}
+        onClick={() => (setTheSection("topStories"), setSuggestions([]))}
         onChange={(e) => optimizedFn(e.target.value)}
       />
       {loading ? (
@@ -209,108 +292,7 @@ const Home = () => {
         <div>
           <div className="container">
             <div className="page-padding">
-              {showTopStories && (
-                <div className="top-stories-section">
-                  <PageHeader
-                    title="Top Stories"
-                    onClick={showBookMarkSection}
-                    bookmarkText="view bookmark"
-                    onChange={handelChange}
-                    sort={sort}
-                  />
-                  <div className="grid_wrap">
-                    <div className="grid">
-                      <section className="grid_wrap first-grid">
-                        <div className="grid">
-                          {allData?.slice(0, 1).map((item, index) => (
-                            <div onClick={() => handelArtical(item.id)}>
-                              <CardNew
-                                item={item}
-                                index={index}
-                                showBody={true}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      </section>
-                      <section className="grid_wrap second-grid">
-                        <div className="grid">
-                          {allData?.slice(1, 3).map((item, index) => (
-                            <div onClick={() => handelArtical(item.id)}>
-                              <CardNew item={item} index={index} />
-                            </div>
-                          ))}
-                          {allData?.slice(3, 5).map((item, index) => (
-                            <div onClick={() => handelArtical(item.id)}>
-                              <CardNewText item={item} index={index} />
-                            </div>
-                          ))}
-                        </div>
-                      </section>
-                    </div>
-                  </div>
-                  <section className="grid_wrap">
-                    <div className="grid">
-                      {allData?.slice(-3).map((item, index) => (
-                        <div onClick={() => handelArtical(item.id)}>
-                          <CardNew item={item} index={index} showBody={true} />
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                  <section className="grid_wrap">
-                    <h1>Sports</h1>
-                    <div className="grid">
-                      {sportData?.slice(-3).map((item, index) => (
-                        <div onClick={() => handelArtical(item.id)}>
-                          <CardNew item={item} index={index} />
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                  <section className="grid_wrap">
-                    <h1>Culture</h1>
-                    <div className="grid">
-                      {cultureData?.slice(-3).map((item, index) => (
-                        <div onClick={() => handelArtical(item.id)}>
-                          <CardNew item={item} index={index} />
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                </div>
-              )}
-              {showSearch && (
-                <div className="search-section">
-                  <PageHeader
-                    title="Search Result"
-                    onClick={showBookMarkSection}
-                    bookmarkText="view bookmark"
-                    onChange={handelChange}
-                    sort={sort}
-                  />
-                  {HandleCard(suggestions)}
-                </div>
-              )}
-              {showBookMark && (
-                <div className="bookmark-section">
-                  <PageHeader
-                    title="All Bookmark"
-                    onChange={handelChange}
-                    sort={sort}
-                  />
-                  {HandleCard(bookMarkList)}
-                </div>
-              )}
-              {showArtical && (
-                <Artical
-                  onClick={handleBookmarkList}
-                  bookmarkText={bookmarkText}
-                  articalData={articalData}
-                  showSnack={showSnack}
-                  typeSnack={typeSnack}
-                />
-              )}
+              <SwitchSection />
             </div>
           </div>
           <Footer />

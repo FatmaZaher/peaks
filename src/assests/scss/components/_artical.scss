@@ -65,9 +65,16 @@
             }
         }
 
+        .artical-media {
+            width: 43%;
+        }
+
         @include mobile {
             >div:first-of-type {
                 width: 100%
+            }
+            .artical-media {
+                width: 100%;
             }
         }
     }

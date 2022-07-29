@@ -12,7 +12,7 @@ const Artical = (props) => {
       <h2>{articalData.fields.headline}</h2>
       <div className="artical-body">
         <div
-          className={articalData.fields.thumbnail ?'width55' : null}
+          className={articalData.fields.thumbnail ? "width55" : null}
           dangerouslySetInnerHTML={{ __html: articalData.fields.body }}
         />
         {articalData.fields.thumbnail && (
