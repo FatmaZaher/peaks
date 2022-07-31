@@ -2,7 +2,7 @@ import React from "react";
 import logo from "../assests/images/logo.png";
 
 const CardNew = (props) => {
-  const { item, index, showBody, onClick } = props;
+  const { item, showBody, onClick } = props;
   const card = {
     backgroundImage: `url(${item.fields.thumbnail})`,
   };
@@ -28,7 +28,6 @@ const CardNew = (props) => {
     <div
       className="card-new"
       style={item.fields.thumbnail ? card : peaksBack}
-      index={index}
       onClick={onClick}
     >
       {!item.fields.thumbnail && (

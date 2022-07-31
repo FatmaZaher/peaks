@@ -81,11 +81,11 @@ const Home = () => {
   const debounce = (func) => {
     let timer;
     return function (...args) {
-      const context = this;
       if (timer) clearTimeout(timer);
       timer = setTimeout(() => {
         timer = null;
-        func.apply(context, args);
+        func.apply(this, args);
+
       }, 500);
     };
   };
@@ -99,6 +99,7 @@ const Home = () => {
   };
 
   const handleSearch = async (value) => {
+
     if (!isFetching) {
       setLoading(true);
     } else {
@@ -134,8 +135,8 @@ const Home = () => {
         <section className="grid_wrap">
           <div className="grid">
             {data.map((item, index) => (
-              <div onClick={() => handelArtical(item.id)}>
-                <CardNew item={item} index={index} />
+              <div onClick={() => handelArtical(item.id)} key={index}>
+                <CardNew item={item} />
               </div>
             ))}
           </div>
@@ -187,8 +188,8 @@ const Home = () => {
                 <section className="grid_wrap first-grid">
                   <div className="grid">
                     {allData?.slice(0, 1).map((item, index) => (
-                      <div onClick={() => handelArtical(item.id)}>
-                        <CardNew item={item} index={index} showBody={true} />
+                      <div onClick={() => handelArtical(item.id)} key={index}>
+                        <CardNew item={item} showBody={true} />
                       </div>
                     ))}
                   </div>
@@ -196,13 +197,13 @@ const Home = () => {
                 <section className="grid_wrap second-grid">
                   <div className="grid">
                     {allData?.slice(1, 3).map((item, index) => (
-                      <div onClick={() => handelArtical(item.id)}>
-                        <CardNew item={item} index={index} />
+                      <div onClick={() => handelArtical(item.id)} key={index}>
+                        <CardNew item={item} />
                       </div>
                     ))}
                     {allData?.slice(3, 5).map((item, index) => (
-                      <div onClick={() => handelArtical(item.id)}>
-                        <CardNewText item={item} index={index} />
+                      <div onClick={() => handelArtical(item.id)} key={index}>
+                        <CardNewText item={item} />
                       </div>
                     ))}
                   </div>
@@ -212,8 +213,8 @@ const Home = () => {
             <section className="grid_wrap">
               <div className="grid">
                 {allData?.slice(-3).map((item, index) => (
-                  <div onClick={() => handelArtical(item.id)}>
-                    <CardNew item={item} index={index} showBody={true} />
+                  <div onClick={() => handelArtical(item.id)} key={index}>
+                    <CardNew item={item} showBody={true} />
                   </div>
                 ))}
               </div>
@@ -222,8 +223,8 @@ const Home = () => {
               <h1>Sports</h1>
               <div className="grid">
                 {sportData?.slice(-3).map((item, index) => (
-                  <div onClick={() => handelArtical(item.id)}>
-                    <CardNew item={item} index={index} />
+                  <div onClick={() => handelArtical(item.id)} key={index}>
+                    <CardNew item={item} />
                   </div>
                 ))}
               </div>
@@ -232,8 +233,8 @@ const Home = () => {
               <h1>Culture</h1>
               <div className="grid">
                 {cultureData?.slice(-3).map((item, index) => (
-                  <div onClick={() => handelArtical(item.id)}>
-                    <CardNew item={item} index={index} />
+                  <div onClick={() => handelArtical(item.id)} key={index}>
+                    <CardNew item={item} />
                   </div>
                 ))}
               </div>
@@ -279,7 +280,6 @@ const Home = () => {
         );
     }
   };
-  console.log("suggestions", suggestions);
   return (
     <div className="home-page">
       <Header
