@@ -1,8 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import logo from "../assests/images/logo.png";
+import { GlobalContext } from "../contexts/BookContext";
 
 const CardNew = (props) => {
-  const { item, showBody, onClick } = props;
+  const { item, showBody } = props;
+  const { setArticalId, articalId , setActivePage} = useContext(GlobalContext);
+
   const card = {
     backgroundImage: `url(${item.fields.thumbnail})`,
   };
@@ -24,11 +27,15 @@ const CardNew = (props) => {
         return <div className="sectionColor"></div>;
     }
   }
+  const handelArtical = (id) => {
+    setActivePage("artical")
+    setArticalId(id);
+  };
   return (
     <div
       className="card-new"
       style={item.fields.thumbnail ? card : peaksBack}
-      onClick={onClick}
+      onClick={() => handelArtical(item.id)}
     >
       {!item.fields.thumbnail && (
         <div className="peaksBack">
@@ -39,7 +46,7 @@ const CardNew = (props) => {
         <h3 className="title">{item.webTitle}</h3>
         {showBody && <p>{item.fields.headline}</p>}
       </div>
-      <SwitchCase value={item.sectionId} /> 
+      <SwitchCase value={item.sectionId} />
     </div>
   );
 };

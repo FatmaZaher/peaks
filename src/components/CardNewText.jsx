@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
+import { GlobalContext } from "../contexts/BookContext";
 
 const CardNew = (props) => {
-  const { item, index, onClick } = props;
+  const { item } = props;
+  const { setArticalId, articalId, setActivePage } = useContext(GlobalContext);
+
   function SwitchCase(props) {
     switch (props.value) {
       case "sports":
@@ -17,12 +20,16 @@ const CardNew = (props) => {
         return <div className="red sectionColor"></div>;
     }
   }
+  const handelArtical = (id) => {
+    setActivePage("artical");
+    setArticalId(id);
+  };
   return (
-    <div className="card-new-text" index={index} onClick={onClick}>
+    <div className="card-new-text" onClick={() => handelArtical(item.id)}>
       <div className="card-info">
         <h3 className="title">{item.webTitle}</h3>
       </div>
-     <SwitchCase value={item.sectionId} /> 
+      <SwitchCase value={item.sectionId} />
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React from "react";
 
 const Select = (props) => {
-  const { onChange, sort } = props;
+  const { onChange, orderBy } = props;
 
   return (
     <div className="form-control">
@@ -10,7 +10,7 @@ const Select = (props) => {
         name="fitler"
         className="select-input"
         onChange={onChange}
-        value={sort}
+        value={orderBy}
       >
         <option value="newest">Newest first</option>
         <option value="oldest">Oldest first</option>

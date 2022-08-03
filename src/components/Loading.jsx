@@ -13,7 +13,7 @@ const Loading = () => {
             r="20"
             fill="none"
             stroke="#09357B"
-            strokeWidth="2"
+            strokeWidth="3"
           />
         </svg>
       </div>

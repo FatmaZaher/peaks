@@ -3,7 +3,7 @@ import Button from "./Button";
 import Select from "./Select";
 
 const PageHeader = (props) => {
-  const { title, onClick, bookmarkText, onChange, sort } = props;
+  const { title, onClick, bookmarkText, onChange, orderBy } = props;
 
   return (
     <div className="page-header">
@@ -13,7 +13,7 @@ const PageHeader = (props) => {
           <Button onClick={onClick} bookmarkText={bookmarkText} />
         )}
 
-        <Select onChange={onChange} sort={sort} />
+        <Select onChange={onChange} orderBy={orderBy} />
       </div>
     </div>
   );
