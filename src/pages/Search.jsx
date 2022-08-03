@@ -3,6 +3,7 @@ import CardNew from "../components/CardNew";
 import PageHeader from "../components/PageHeader";
 import { GlobalContext } from "../contexts/BookContext";
 import { getHomeNews } from "../api/home.api";
+import Loading from "../components/Loading";
 
 const Search = () => {
   const [orderBy, setorderBy] = useState("newest");
@@ -10,6 +11,7 @@ const Search = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(true);
 
   const handelChange = (e) => {
     setorderBy(e.target.value);
@@ -34,6 +36,7 @@ const Search = () => {
         })
           .then((res) => {
             setSuggestions(res.data.response.results);
+            setLoading(false);
           })
           .catch(() => ({
             errorMessage: "Something went wrong",
@@ -44,7 +47,7 @@ const Search = () => {
     }
 
     window.addEventListener("scroll", isScrolling);
-  }, [ searchValue, orderBy]);
+  }, [searchValue, orderBy]);
 
   useEffect(() => {
     if (isFetching) {
@@ -76,13 +79,17 @@ const Search = () => {
         bookmarkText="view bookmark"
         onClick={() => (setActivePage("bookmark"), setSuggestions([]))}
       />
-      <section className="grid_wrap">
-        <div className="grid">
-          {suggestions.map((item, index) => (
-            <CardNew item={item} key={index} />
-          ))}
-        </div>
-      </section>
+      {loading ? (
+        <Loading />
+      ) : (
+        <section className="grid_wrap">
+          <div className="grid">
+            {suggestions.map((item, index) => (
+              <CardNew item={item} key={index} />
+            ))}
+          </div>
+        </section>
+      )}
     </div>
   );
 };
