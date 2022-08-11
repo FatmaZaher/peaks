@@ -1,5 +1,7 @@
 import React from "react";
 import Bookmark from "./icons/Bookmark";
+import PropTypes from 'prop-types';
+
 
 const Snackbar = (props) => {
   const { showSnack, typeSnack } = props;
@@ -22,4 +24,8 @@ const Snackbar = (props) => {
     </div>
   );
 };
+Snackbar.propTypes = {
+  showSnack: PropTypes.string,
+  typeSnack: PropTypes.string
+}
 export default Snackbar;

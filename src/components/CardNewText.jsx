@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { GlobalContext } from "../contexts/BookContext";
+import PropTypes from 'prop-types';
 
 const CardNew = (props) => {
   const { item } = props;
@@ -24,6 +25,8 @@ const CardNew = (props) => {
     setActivePage("artical");
     setArticalId(id);
   };
+
+
   return (
     <div className="card-new-text" onClick={() => handelArtical(item.id)}>
       <div className="card-info">
@@ -33,4 +36,7 @@ const CardNew = (props) => {
     </div>
   );
 };
+CardNew.propTypes = {
+  item: PropTypes.object
+}
 export default CardNew;

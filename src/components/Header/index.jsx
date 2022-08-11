@@ -1,7 +1,7 @@
 import React, {useContext} from "react";
-import logo from "../assests/images/logo.png";
-import Search from "./icons/Search";
-import { GlobalContext } from "../contexts/BookContext";
+import logo from "../../assests/images/logo.png";
+import Search from "../icons/Search";
+import { GlobalContext } from "../../contexts/BookContext";
 
 const Header = () => {
   const { setSearchValue, searchValue, setActivePage } = useContext(GlobalContext);

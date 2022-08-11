@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
-import logo from "../assests/images/logo.png";
-import { GlobalContext } from "../contexts/BookContext";
+import logo from "../../assests/images/logo.png";
+import { GlobalContext } from "../../contexts/BookContext";
+import PropTypes from 'prop-types';
 
 const CardNew = (props) => {
   const { item, showBody } = props;
@@ -50,4 +51,9 @@ const CardNew = (props) => {
     </div>
   );
 };
+CardNew.propTypes = {
+  item: PropTypes.object,
+  showBody: PropTypes.bool,
+
+}
 export default CardNew;

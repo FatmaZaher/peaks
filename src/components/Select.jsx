@@ -1,4 +1,6 @@
 import React from "react";
+import PropTypes from 'prop-types';
+
 
 const Select = (props) => {
   const { onChange, orderBy } = props;
@@ -18,4 +20,8 @@ const Select = (props) => {
     </div>
   );
 };
+Select.propTypes = {
+  onChange: PropTypes.func,
+  orderBy: PropTypes.string
+}
 export default Select;

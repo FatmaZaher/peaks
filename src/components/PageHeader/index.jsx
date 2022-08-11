@@ -1,6 +1,8 @@
-import React, { useState } from "react";
-import Button from "./Button";
-import Select from "./Select";
+import React from "react";
+import Button from "../Button";
+import Select from "../Select";
+import PropTypes from 'prop-types';
+
 
 const PageHeader = (props) => {
   const { title, onClick, bookmarkText, onChange, orderBy } = props;
@@ -18,4 +20,12 @@ const PageHeader = (props) => {
     </div>
   );
 };
+PageHeader.propTypes = {
+  title: PropTypes.string,
+  onClick: PropTypes.func,
+  bookmarkText: PropTypes.string,
+  onChange: PropTypes.func,
+  orderBy: PropTypes.string,
+
+}
 export default PageHeader;

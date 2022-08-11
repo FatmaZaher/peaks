@@ -1,17 +1,17 @@
 import React, { useState, useContext, useEffect } from "react";
-import { getArtical } from "../api/artical.api";
-import Button from "../components/Button";
-import Snackbar from "../components/Snackbar";
-import Loading from "../components/Loading";
+import { getArtical } from "../../api/artical.api";
+import Button from "../../components/Button";
+import Snackbar from "../../components/Snackbar";
+import Loading from "../../components/Loading";
 
-import { GlobalContext } from "../contexts/BookContext";
+import { GlobalContext } from "../../contexts/BookContext";
 
 const Artical = () => {
   const [articalData, setArticalData] = useState();
   const [isInBookList, setIsInBookList] = useState(false);
   const [bookmarkText, setBookmarkText] = useState("add bookmark");
   const [showSnack, setShowSnack] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [typeSnack, setTypeSnack] = useState();
   const {
     articalId,
@@ -21,6 +21,7 @@ const Artical = () => {
   } = useContext(GlobalContext);
 
   useEffect(() => {
+    // window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     (async () => {
       await getArtical({
         articalID: articalId,

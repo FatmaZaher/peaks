@@ -6,7 +6,7 @@ import { GlobalProvider, GlobalContext } from './contexts/BookContext';
 import Home from "./pages/Home"
 import Search from "./pages/Search"
 import Bookmark from "./pages/Bookmark"
-import Artical from "./pages/Artical"
+import Artical from "./pages/Artical/Artical"
 import Header from './components/Header';
 import Footer from './components/Footer';
 
@@ -43,7 +43,6 @@ function Content() {
         {switchSection(activePage)}
       </div>
     </div>
-
   )
 }
 

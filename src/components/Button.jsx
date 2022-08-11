@@ -1,5 +1,7 @@
 import React from "react";
 import Bookmark from "./icons/Bookmark";
+import PropTypes from 'prop-types';
+
 
 const Button = (props) => {
   const {onClick, bookmarkText} = props;
@@ -11,4 +13,8 @@ const Button = (props) => {
     </button>
   );
 };
+Button.propTypes = {
+  onClick: PropTypes.func,
+  bookmarkText: PropTypes.string
+}
 export default Button;

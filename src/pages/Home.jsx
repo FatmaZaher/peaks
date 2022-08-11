@@ -23,10 +23,12 @@ const Home = () => {
         await getHomeNews({
           orderBy: orderBy,
           section: ["sport"],
+          pageSize: 3
         }),
         await getHomeNews({
           orderBy: orderBy,
           section: ["culture"],
+          pageSize: 3
         }),
       ])
         .then((values) => {
@@ -49,6 +51,7 @@ const Home = () => {
         bookmarkText="view bookmark"
         onChange={handelChange}
         orderBy={orderBy}
+
       />
       {loading ? (
         <Loading />
@@ -77,7 +80,7 @@ const Home = () => {
           </div>
           <section className="grid_wrap">
             <div className="grid">
-              {allData?.slice(-3).map((item, index) => (
+              {allData?.map((item, index) => (
                 <CardNew item={item} showBody={true} key={index} />
               ))}
             </div>
@@ -91,7 +94,7 @@ const Home = () => {
           <Loading />
         ) : (
           <div className="grid">
-            {sportData?.slice(-3).map((item, index) => (
+            {sportData?.map((item, index) => (
               <CardNew item={item} key={index} />
             ))}
           </div>
